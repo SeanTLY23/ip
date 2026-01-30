@@ -1,23 +1,36 @@
 import java.util.Scanner;
 
 public class Dude {
+    private static List[] taskList = new List[100];
+    private static int taskCount = 0;
     public static void printHorizontalLine() {
         System.out.println("____________________________________");
     }
 
-    public static void echoMessage(){
+    public static void respondToMessage(){
         Scanner in = new Scanner(System.in);
         String line;
         while (true) {
             line = in.nextLine();
-            if (line.equals("bye")){
+            if (line.equalsIgnoreCase("bye")) {
                 break;
             }
-            printHorizontalLine();
-            System.out.println("Dude " + line);
-            printHorizontalLine();
+            else if (line.equalsIgnoreCase("list")) {
+                printHorizontalLine();
+                for (int i = 0; i < taskCount; i++){
+                    System.out.println((i + 1) + ". " + taskList[i].getList());
+                }
+                printHorizontalLine();
+            }
+            else {
+                taskList[taskCount] = new List(line);
+                taskCount += 1;
+                printHorizontalLine();
+                System.out.println("Dude I added: " + line);
+                printHorizontalLine();
+            }
         }
-        System.out.println("Dude that's it? Okay Bye. See you again soon I hope");
+        System.out.println("Dude that's it? Okay Bye. See you again soon I hope.");
         printHorizontalLine();
     }
 
@@ -30,6 +43,6 @@ public class Dude {
         printHorizontalLine();
         System.out.println(logo + "Hello! I'm Dude\nWhat can I do for you?");
         printHorizontalLine();
-        echoMessage();
+        respondToMessage();
     }
 }
