@@ -1,10 +1,16 @@
 import java.util.Scanner;
 
 public class Dude {
-    private static List[] taskList = new List[100];
+    private static Task[] taskList = new Task[100];
     private static int taskCount = 0;
     public static void printHorizontalLine() {
         System.out.println("____________________________________");
+    }
+    public static int getTaskNumber(String message) {
+        message = message.replace(" ","");
+        message = message.replace("unmark","");
+        message = message.replace("mark","");
+        return Integer.parseInt(message);
     }
 
     public static void respondToMessage(){
@@ -18,12 +24,26 @@ public class Dude {
             else if (line.equalsIgnoreCase("list")) {
                 printHorizontalLine();
                 for (int i = 0; i < taskCount; i++){
-                    System.out.println((i + 1) + ". " + taskList[i].getList());
+                    System.out.println((i + 1) + ".[" + taskList[i].getStatusIcon() + "] " + taskList[i].getTask());
                 }
                 printHorizontalLine();
             }
+            else if (line.startsWith("unmark")) {
+                int index = getTaskNumber(line) - 1;
+                printHorizontalLine();
+                taskList[index].setIsDone(false);
+                System.out.println("Dude really? I've marked this task as not done yet:\n  [" + taskList[index].getStatusIcon() + "] " + taskList[index].getTask());
+                printHorizontalLine();
+            }
+            else if (line.startsWith("mark")) {
+                int index = getTaskNumber(line) - 1;
+                printHorizontalLine();
+                taskList[index].setIsDone(true);
+                System.out.println("Dude OKAY. I've marked this task as done:\n  [" + taskList[index].getStatusIcon() + "] " + taskList[index].getTask());
+                printHorizontalLine();
+            }
             else {
-                taskList[taskCount] = new List(line);
+                taskList[taskCount] = new Task(line);
                 taskCount += 1;
                 printHorizontalLine();
                 System.out.println("Dude I added: " + line);
