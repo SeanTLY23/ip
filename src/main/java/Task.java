@@ -1,26 +1,33 @@
+/**
+ * Represents a task with a task name and completion status.
+ */
 public class Task {
-    private String task;
+    private String taskName;
     private boolean isDone;
 
+    /**
+     * Initializes a new Task with the given description.
+     *
+     * @param taskName The text describing the task.
+     */
     public Task(String task) {
-        this.task = task;
-        this.isDone = false;
+        this.taskName = task;
+        isDone = false;
     }
 
-    public String getTask() {
-        return task;
+    public String getTaskName() {
+        return taskName;
     }
 
-    public boolean getIsDone(){
+    public boolean isDone() {
         return isDone;
     }
 
-    public void setIsDone(boolean isDone){
+    public void setDone(boolean isDone) {
         this.isDone = isDone;
     }
 
     public String getStatusIcon() {
         return (isDone ? "X" : " ");
     }
-    
 }

@@ -1,48 +1,65 @@
 import java.util.Scanner;
 
+/**
+ * Main class for the Dude chatbot.
+ * Handles task management including adding, listing, and marking tasks.
+ */
 public class Dude {
     private static Task[] taskList = new Task[100];
     private static int taskCount = 0;
+
+    /**
+     * Prints a horizontal separator line to the console.
+     */
     public static void printHorizontalLine() {
         System.out.println("____________________________________");
     }
+
+    /**
+     * Extracts the task index number from a command string.
+     *
+     * @param message The raw user input.
+     * @return The integer task number.
+     */
     public static int getTaskNumber(String message) {
-        message = message.replace(" ","");
-        message = message.replace("unmark","");
-        message = message.replace("mark","");
+        message = message.replace(" ", "");
+        message = message.replace("unmark", "");
+        message = message.replace("mark", "");
         return Integer.parseInt(message);
     }
 
-    public static void respondToMessage(){
+    /**
+     * Processes user input in a loop until the 'bye' command is received.
+     */
+    public static void respondToMessage() {
         Scanner in = new Scanner(System.in);
-        String line;
         while (true) {
-            line = in.nextLine();
+            String line = in.nextLine();
             if (line.equalsIgnoreCase("bye")) {
                 break;
-            }
-            else if (line.equalsIgnoreCase("list")) {
+            } else if (line.equalsIgnoreCase("list")) {
                 printHorizontalLine();
-                for (int i = 0; i < taskCount; i++){
-                    System.out.println((i + 1) + ".[" + taskList[i].getStatusIcon() + "] " + taskList[i].getTask());
+                for (int i = 0; i < taskCount; i++) {
+                    System.out.println((i + 1) + ".[" + taskList[i].getStatusIcon() + "] " + taskList[i].getTaskName());
                 }
                 printHorizontalLine();
-            }
-            else if (line.startsWith("unmark")) {
+            } else if (line.startsWith("unmark")) {
                 int index = getTaskNumber(line) - 1;
                 printHorizontalLine();
-                taskList[index].setIsDone(false);
-                System.out.println("Dude really? I've marked this task as not done yet:\n  [" + taskList[index].getStatusIcon() + "] " + taskList[index].getTask());
+                taskList[index].setDone(false);
+                System.out.println(
+                        "Dude really? I've marked this task as not done yet:\n  [" + taskList[index].getStatusIcon()
+                                + "] " + taskList[index].getTaskName());
                 printHorizontalLine();
-            }
-            else if (line.startsWith("mark")) {
+            } else if (line.startsWith("mark")) {
                 int index = getTaskNumber(line) - 1;
                 printHorizontalLine();
-                taskList[index].setIsDone(true);
-                System.out.println("Dude OKAY. I've marked this task as done:\n  [" + taskList[index].getStatusIcon() + "] " + taskList[index].getTask());
+                taskList[index].setDone(true);
+                System.out.println(
+                        "Dude OKAY. I've marked this task" + " as done:\n  [" + taskList[index].getStatusIcon() + "] "
+                                + taskList[index].getTaskName());
                 printHorizontalLine();
-            }
-            else {
+            } else {
                 taskList[taskCount] = new Task(line);
                 taskCount += 1;
                 printHorizontalLine();
@@ -55,11 +72,9 @@ public class Dude {
     }
 
     public static void main(String[] args) {
-        String logo = " ____        _____        \n"
-                    + "|  _ \\ _   _|  _ \\   ___ \n"
-                    + "| | | | | | | | | |/  _ \\\n"
-                    + "| |_| | |_| | |_| |\\  __/\n"
-                    + "|____/ \\__,_|____/  \\___|\n";
+        String logo =
+                " ____        _____        \n" + "|  _ \\ _   _|  _ \\   ___ \n" + "| | | | | | | | | |/  _ \\\n" +
+                        "| |_| | |_| | |_| |\\  __/\n" + "|____/ \\__,_|____/  \\___|\n";
         printHorizontalLine();
         System.out.println(logo + "Hello! I'm Dude\nWhat can I do for you?");
         printHorizontalLine();
