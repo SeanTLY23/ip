@@ -29,6 +29,49 @@ public class Dude {
     }
 
     /**
+     * Extracts the first word from the message to determine the command task type.
+     */
+    public static String getTaskType(String message) {
+        String[] commandParts = message.split(" ", 2);
+        return commandParts[0];
+    }
+
+    /**
+     * Extracts the description by splitting at the first slash (/).
+     */
+    public static String getTaskDescription(String message) {
+        String type = getTaskType(message);
+        String details = message.replaceFirst(type, "").trim();
+        String[] parts = details.split("/", 2);
+        return parts[0].trim();
+    }
+
+    /**
+     * Extracts the date/time for a deadline task by splitting at "/by".
+     */
+    public static String getDeadlineDate(String message) {
+        String[] parts = message.split("/by", 2);
+        return parts[1].trim();
+    }
+
+    /**
+     * Extracts the "from" time for an event task by splitting between "/from" and "/to".
+     */
+    public static String getEventFromTime(String message) {
+        String afterFrom = message.split("/from", 2)[1];
+        String[] timeParts = afterFrom.split("/to", 2);
+        return timeParts[0].trim();
+    }
+
+    /**
+     * Extracts the "to" time for an event task by taking everything after "/to".
+     */
+    public static String getEventToTime(String message) {
+        String[] parts = message.split("/to", 2);
+        return parts[1].trim();
+    }
+    
+    /**
      * Processes user input in a loop until the 'bye' command is received.
      */
     public static void respondToMessage() {
@@ -39,6 +82,7 @@ public class Dude {
                 break;
             } else if (line.equalsIgnoreCase("list")) {
                 printHorizontalLine();
+                System.out.println("Here are the tasks in your list:");
                 for (int i = 0; i < taskCount; i++) {
                     System.out.println((i + 1) + "." + taskList[i]);
                 }
@@ -54,13 +98,28 @@ public class Dude {
                 int index = getTaskNumber(line) - 1;
                 printHorizontalLine();
                 taskList[index].setDone(true);
-                System.out.println( "Dude OKAY. I've marked this task as done:\n " + taskList[index]);
+                System.out.println("Dude OKAY. I've marked this task as done:\n " + taskList[index]);
                 printHorizontalLine();
             } else {
-                taskList[taskCount] = new Task(line);
+                switch (getTaskType(line)) {
+                case "todo":
+                    taskList[taskCount] = new Todo(getTaskDescription(line));
+                    break;
+                case "deadline":
+                    taskList[taskCount] = new Deadline(getTaskDescription(line), getDeadlineDate(line));
+                    break;
+                case "event":
+                    taskList[taskCount] =
+                            new Event(getTaskDescription(line), getEventFromTime(line), getEventToTime(line));
+                    break;
+                default:
+                    break;
+                }
                 taskCount += 1;
                 printHorizontalLine();
-                System.out.println("Dude I added: " + line);
+                System.out.println(
+                        "Dude I got it. I've added this task:\n" + taskList[taskCount - 1] + "\nNow you have "
+                                + taskCount + " tasks in the list.");
                 printHorizontalLine();
             }
         }
@@ -70,8 +129,8 @@ public class Dude {
 
     public static void main(String[] args) {
         String logo =
-                " ____        _____        \n" + "|  _ \\ _   _|  _ \\   ___ \n" + "| | | | | | | | | |/  _ \\\n" +
-                        "| |_| | |_| | |_| |\\  __/\n" + "|____/ \\__,_|____/  \\___|\n";
+                " ____        _____        \n" + "|  _ \\ _   _|  _ \\   ___ \n" + "| | | | | | | | | |/  _ \\\n"
+                        + "| |_| | |_| | |_| |\\  __/\n" + "|____/ \\__,_|____/  \\___|\n";
         printHorizontalLine();
         System.out.println(logo + "Hello! I'm Dude\nWhat can I do for you?");
         printHorizontalLine();
