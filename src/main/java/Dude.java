@@ -40,7 +40,7 @@ public class Dude {
             } else if (line.equalsIgnoreCase("list")) {
                 printHorizontalLine();
                 for (int i = 0; i < taskCount; i++) {
-                    System.out.println((i + 1) + ".[" + taskList[i].getStatusIcon() + "] " + taskList[i].getTaskName());
+                    System.out.println((i + 1) + "." + taskList[i]);
                 }
                 printHorizontalLine();
             } else if (line.startsWith("unmark")) {
@@ -48,16 +48,13 @@ public class Dude {
                 printHorizontalLine();
                 taskList[index].setDone(false);
                 System.out.println(
-                        "Dude really? I've marked this task as not done yet:\n  [" + taskList[index].getStatusIcon()
-                                + "] " + taskList[index].getTaskName());
+                        "Dude really? I've marked this task as not done yet:\n" + taskList[index]);
                 printHorizontalLine();
             } else if (line.startsWith("mark")) {
                 int index = getTaskNumber(line) - 1;
                 printHorizontalLine();
                 taskList[index].setDone(true);
-                System.out.println(
-                        "Dude OKAY. I've marked this task" + " as done:\n  [" + taskList[index].getStatusIcon() + "] "
-                                + taskList[index].getTaskName());
+                System.out.println( "Dude OKAY. I've marked this task as done:\n " + taskList[index]);
                 printHorizontalLine();
             } else {
                 taskList[taskCount] = new Task(line);

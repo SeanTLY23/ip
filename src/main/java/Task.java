@@ -8,7 +8,7 @@ public class Task {
     /**
      * Initializes a new Task with the given description.
      *
-     * @param taskName The text describing the task.
+     * @param task The text describing the task.
      */
     public Task(String task) {
         this.taskName = task;
@@ -30,4 +30,11 @@ public class Task {
     public String getStatusIcon() {
         return (isDone ? "X" : " ");
     }
+
+    @Override
+    public String toString() {
+        return "[" + getStatusIcon() + "] " + getTaskName();
+    }
+
+
 }
