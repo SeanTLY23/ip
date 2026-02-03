@@ -1,7 +1,52 @@
-Hello from
- ____        _        
-|  _ \ _   _| | _____ 
-| | | | | | | |/ / _ \
-| |_| | |_| |   <  __/
-|____/ \__,_|_|\_\___|
-
+____________________________________
+ ____        _____
+|  _ \ _   _|  _ \   ___
+| | | | | | | | | |/  _ \
+| |_| | |_| | |_| |\  __/
+|____/ \__,_|____/  \___|
+Hello! I'm Dude
+What can I do for you?
+____________________________________
+____________________________________
+Dude I got it. I've added this task:
+[T][ ] borrow book
+Now you have 1 tasks in the list.
+____________________________________
+____________________________________
+Dude I got it. I've added this task:
+[D][ ] return book (by: Sunday)
+Now you have 2 tasks in the list.
+____________________________________
+____________________________________
+Dude I got it. I've added this task:
+[E][ ] project meeting (from: Mon 2pm to: 4pm)
+Now you have 3 tasks in the list.
+____________________________________
+____________________________________
+Here are the tasks in your list:
+1.[T][ ] borrow book
+2.[D][ ] return book (by: Sunday)
+3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+____________________________________
+____________________________________
+Dude OKAY. I've marked this task as done:
+ [D][X] return book (by: Sunday)
+____________________________________
+____________________________________
+Here are the tasks in your list:
+1.[T][ ] borrow book
+2.[D][X] return book (by: Sunday)
+3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+____________________________________
+____________________________________
+Dude really? I've marked this task as not done yet:
+[D][ ] return book (by: Sunday)
+____________________________________
+____________________________________
+Here are the tasks in your list:
+1.[T][ ] borrow book
+2.[D][ ] return book (by: Sunday)
+3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+____________________________________
+Dude that's it? Okay Bye. See you again soon I hope.
+____________________________________

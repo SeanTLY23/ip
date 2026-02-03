@@ -70,7 +70,7 @@ public class Dude {
         String[] parts = message.split("/to", 2);
         return parts[1].trim();
     }
-    
+
     /**
      * Processes user input in a loop until the 'bye' command is received.
      */
@@ -129,7 +129,7 @@ public class Dude {
 
     public static void main(String[] args) {
         String logo =
-                " ____        _____        \n" + "|  _ \\ _   _|  _ \\   ___ \n" + "| | | | | | | | | |/  _ \\\n"
+                " ____        _____\n" + "|  _ \\ _   _|  _ \\   ___\n" + "| | | | | | | | | |/  _ \\\n"
                         + "| |_| | |_| | |_| |\\  __/\n" + "|____/ \\__,_|____/  \\___|\n";
         printHorizontalLine();
         System.out.println(logo + "Hello! I'm Dude\nWhat can I do for you?");
