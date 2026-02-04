@@ -5,8 +5,130 @@ import java.util.Scanner;
  * Handles task management including adding, listing, and marking tasks.
  */
 public class Dude {
-    private static Task[] taskList = new Task[100];
+    public static final int MAX_TASKS = 100;
+    private static Task[] taskList = new Task[MAX_TASKS];
     private static int taskCount = 0;
+
+    public static void main(String[] args) {
+        printGreeting();
+        respondToMessage();
+    }
+
+    /**
+     * Processes user input in a loop until the 'bye' command is received.
+     */
+    public static void respondToMessage() {
+        Scanner in = new Scanner(System.in);
+        boolean isRunning = true;
+        while (isRunning) {
+            String line = in.nextLine();
+            if (line.equalsIgnoreCase("bye")) {
+                isRunning = false;
+            } else processMessage(line);
+        }
+        exitMessage();
+    }
+
+    /**
+     * Interprets the user's input and produces the appropriate task management command.
+     *
+     * @param line The raw string input from the user.
+     */
+    private static void processMessage(String line) {
+        if (line.equalsIgnoreCase("list")) {
+            listTasks();
+        } else if (line.startsWith("unmark")) {
+            handleMarking(line, false);
+        } else if (line.startsWith("mark")) {
+            handleMarking(line, true);
+        } else {
+            addTaskByType(line);
+            taskCreatedMessage();
+        }
+    }
+
+    /**
+     * Updates the completion status of a task and provides feedback to the user.
+     *
+     * @param line   The raw user input containing the task index.
+     * @param isDone The new status to set (true for marked, false for unmarked).
+     */
+    private static void handleMarking(String line, boolean isDone) {
+        int index = getTaskNumber(line) - 1;
+        taskList[index].setDone(isDone);
+        String feedback = isDone
+                ? "Dude OKAY. I've marked this task as done:\n "
+                : "Dude really? I've marked this task as not done yet:\n";
+        printHorizontalLine();
+        System.out.println(feedback + taskList[index]);
+        printHorizontalLine();
+    }
+
+    /**
+     * Prints a confirmation message after a task is successfully added to the list.
+     */
+    private static void taskCreatedMessage() {
+        printHorizontalLine();
+        System.out.println(
+                "Dude I got it. I've added this task:\n" + taskList[taskCount - 1] + "\nNow you have "
+                        + taskCount + " tasks in the list.");
+        printHorizontalLine();
+    }
+
+    /**
+     * Adds the corresponding task type to the task list.
+     *
+     * @param line The raw user input containing the task type and details.
+     */
+    private static void addTaskByType(String line) {
+        switch (getTaskType(line)) {
+        case "todo":
+            taskList[taskCount] = new Todo(getTaskDescription(line));
+            break;
+        case "deadline":
+            taskList[taskCount] = new Deadline(getTaskDescription(line), getDeadlineDate(line));
+            break;
+        case "event":
+            taskList[taskCount] =
+                    new Event(getTaskDescription(line), getEventFromTime(line), getEventToTime(line));
+            break;
+        default:
+            break;
+        }
+        taskCount += 1;
+    }
+
+    /**
+     * Prints the closing message when the user exits the chatbot.
+     */
+    private static void exitMessage() {
+        System.out.println("Dude that's it? Okay Bye. See you again soon I hope.");
+        printHorizontalLine();
+    }
+
+    /**
+     * Iterates through the task list and prints each task with its index number.
+     */
+    private static void listTasks() {
+        printHorizontalLine();
+        System.out.println("Here are the tasks in your list:");
+        for (int i = 0; i < taskCount; i++) {
+            System.out.println((i + 1) + "." + taskList[i]);
+        }
+        printHorizontalLine();
+    }
+
+    /**
+     * Displays initial welcome message.
+     */
+    private static void printGreeting() {
+        String logo =
+                " ____        _____\n" + "|  _ \\ _   _|  _ \\   ___\n" + "| | | | | | | | | |/  _ \\\n"
+                        + "| |_| | |_| | |_| |\\  __/\n" + "|____/ \\__,_|____/  \\___|\n";
+        printHorizontalLine();
+        System.out.println(logo + "Hello! I'm Dude\nWhat can I do for you?");
+        printHorizontalLine();
+    }
 
     /**
      * Prints a horizontal separator line to the console.
@@ -69,71 +191,5 @@ public class Dude {
     public static String getEventToTime(String message) {
         String[] parts = message.split("/to", 2);
         return parts[1].trim();
-    }
-
-    /**
-     * Processes user input in a loop until the 'bye' command is received.
-     */
-    public static void respondToMessage() {
-        Scanner in = new Scanner(System.in);
-        while (true) {
-            String line = in.nextLine();
-            if (line.equalsIgnoreCase("bye")) {
-                break;
-            } else if (line.equalsIgnoreCase("list")) {
-                printHorizontalLine();
-                System.out.println("Here are the tasks in your list:");
-                for (int i = 0; i < taskCount; i++) {
-                    System.out.println((i + 1) + "." + taskList[i]);
-                }
-                printHorizontalLine();
-            } else if (line.startsWith("unmark")) {
-                int index = getTaskNumber(line) - 1;
-                printHorizontalLine();
-                taskList[index].setDone(false);
-                System.out.println(
-                        "Dude really? I've marked this task as not done yet:\n" + taskList[index]);
-                printHorizontalLine();
-            } else if (line.startsWith("mark")) {
-                int index = getTaskNumber(line) - 1;
-                printHorizontalLine();
-                taskList[index].setDone(true);
-                System.out.println("Dude OKAY. I've marked this task as done:\n " + taskList[index]);
-                printHorizontalLine();
-            } else {
-                switch (getTaskType(line)) {
-                case "todo":
-                    taskList[taskCount] = new Todo(getTaskDescription(line));
-                    break;
-                case "deadline":
-                    taskList[taskCount] = new Deadline(getTaskDescription(line), getDeadlineDate(line));
-                    break;
-                case "event":
-                    taskList[taskCount] =
-                            new Event(getTaskDescription(line), getEventFromTime(line), getEventToTime(line));
-                    break;
-                default:
-                    break;
-                }
-                taskCount += 1;
-                printHorizontalLine();
-                System.out.println(
-                        "Dude I got it. I've added this task:\n" + taskList[taskCount - 1] + "\nNow you have "
-                                + taskCount + " tasks in the list.");
-                printHorizontalLine();
-            }
-        }
-        System.out.println("Dude that's it? Okay Bye. See you again soon I hope.");
-        printHorizontalLine();
-    }
-
-    public static void main(String[] args) {
-        String logo =
-                " ____        _____\n" + "|  _ \\ _   _|  _ \\   ___\n" + "| | | | | | | | | |/  _ \\\n"
-                        + "| |_| | |_| | |_| |\\  __/\n" + "|____/ \\__,_|____/  \\___|\n";
-        printHorizontalLine();
-        System.out.println(logo + "Hello! I'm Dude\nWhat can I do for you?");
-        printHorizontalLine();
-        respondToMessage();
     }
 }
