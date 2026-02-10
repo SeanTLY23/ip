@@ -1,3 +1,5 @@
+package dude.task;
+
 /**
  * Represents a simple task without any date/time attached.
  */

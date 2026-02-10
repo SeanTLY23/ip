@@ -1,3 +1,5 @@
+package dude.task;
+
 /**
  * Represents a task with a task name and completion status.
  */

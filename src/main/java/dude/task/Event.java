@@ -1,3 +1,5 @@
+package dude.task;
+
 /**
  * Represents a task that starts and ends at specific times.
  */
