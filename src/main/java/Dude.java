@@ -24,17 +24,36 @@ public class Dude {
             String line = in.nextLine();
             if (line.equalsIgnoreCase("bye")) {
                 isRunning = false;
-            } else processMessage(line);
+            } else {
+                handleLineCommand(line);
+            }
         }
         exitMessage();
     }
 
     /**
-     * Interprets the user's input and produces the appropriate task management command.
+     * Processes the command and handles errors, such as exceeding the 100-task limit.
+     *
+     * @param line The user input to be executed.
+     */
+    private static void handleLineCommand(String line) {
+        try {
+            processMessage(line);
+        } catch (DudeException e) {
+            printHorizontalLine();
+            System.out.println(e.getMessage());
+            printHorizontalLine();
+        }
+    }
+
+    /**
+     * Interprets the user's input, produces the appropriate task management command and
+     * checks if the task limit is reached.
      *
      * @param line The raw string input from the user.
+     * @throws DudeException If the list is full.
      */
-    private static void processMessage(String line) {
+    private static void processMessage(String line) throws DudeException {
         if (line.equalsIgnoreCase("list")) {
             listTasks();
         } else if (line.startsWith("unmark")) {
@@ -42,8 +61,20 @@ public class Dude {
         } else if (line.startsWith("mark")) {
             handleMarking(line, true);
         } else {
+            taskExceeded();
             addTaskByType(line);
             taskCreatedMessage();
+        }
+    }
+
+    /**
+     * Ensures the task list does not exceed the maximum capacity of MAX_TASKS.
+     *
+     * @throws DudeException If the task count has reached MAX_TASKS.
+     */
+    private static void taskExceeded() throws DudeException {
+        if (taskCount >= MAX_TASKS) {
+            throw new DudeException("this list is already full.");
         }
     }
 
@@ -123,8 +154,13 @@ public class Dude {
      */
     private static void printGreeting() {
         String logo =
-                " ____        _____\n" + "|  _ \\ _   _|  _ \\   ___\n" + "| | | | | | | | | |/  _ \\\n"
-                        + "| |_| | |_| | |_| |\\  __/\n" + "|____/ \\__,_|____/  \\___|\n";
+                """
+                         ____        _____
+                        |  _ \\ _   _|  _ \\   ___
+                        | | | | | | | | | |/  _ \\
+                        | |_| | |_| | |_| |\\  __/
+                        |____/ \\__,_|____/  \\___|
+                        """;
         printHorizontalLine();
         System.out.println(logo + "Hello! I'm Dude\nWhat can I do for you?");
         printHorizontalLine();
@@ -144,10 +180,8 @@ public class Dude {
      * @return The integer task number.
      */
     public static int getTaskNumber(String message) {
-        message = message.replace(" ", "");
-        message = message.replace("unmark", "");
-        message = message.replace("mark", "");
-        return Integer.parseInt(message);
+        String[] messageParts = message.split(" ", 2);
+        return Integer.parseInt(messageParts[1]);
     }
 
     /**
