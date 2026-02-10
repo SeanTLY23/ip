@@ -66,7 +66,7 @@ public class Dude {
      * @return true if the command was a non-task action (terminal);
      * false if it is a valid task that needs to be added to the list.
      * @throws DudeException If the input is empty, the command is unknown,
-     * or specific keywords (like /by) are missing.
+     *                       or specific keywords (like /by) are missing.
      */
     private static boolean isTerminalCommand(String line) throws DudeException {
         String filteredMessage = line.trim();
@@ -121,9 +121,13 @@ public class Dude {
      *
      * @param line   The raw user input containing the task index.
      * @param isDone The new status to set (true for marked, false for unmarked).
+     * @throws DudeException If the task number is out of the valid range of the current list.
      */
-    private static void handleMarking(String line, boolean isDone) {
+    private static void handleMarking(String line, boolean isDone) throws DudeException {
         int index = getTaskNumber(line) - 1;
+        if (index >= taskCount || index < 0) {
+            throw new DudeException("this task number is not valid");
+        }
         taskList[index].setDone(isDone);
         String feedback = isDone
                 ? "Dude OKAY. I've marked this task as done:\n "
@@ -170,6 +174,9 @@ public class Dude {
             }
             if (getEventFromTime(line).isEmpty() || getEventToTime(line).isEmpty()) {
                 throw new DudeException("your event /from or /to cannot be empty");
+            }
+            if (getEventToTime(line).contains("/from")) {
+                throw new DudeException("your /from must be before /to");
             }
             taskList[taskCount] =
                     new Event(getTaskDescription(line), getEventFromTime(line), getEventToTime(line));
@@ -229,10 +236,18 @@ public class Dude {
      *
      * @param message The raw user input.
      * @return The integer task number.
+     * @throws DudeException If no number is provided or if the input cannot be parsed as an integer.
      */
-    public static int getTaskNumber(String message) {
+    public static int getTaskNumber(String message) throws DudeException {
         String[] messageParts = message.split(" ", 2);
-        return Integer.parseInt(messageParts[1]);
+        if (messageParts.length < 2 || messageParts[1].trim().isEmpty()) {
+            throw new DudeException("I need a task number to work with.");
+        }
+        try {
+            return Integer.parseInt(messageParts[1].trim());
+        } catch (NumberFormatException e) {
+            throw new DudeException("That's not a number.");
+        }
     }
 
     /**
