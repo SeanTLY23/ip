@@ -24,26 +24,95 @@ public class Dude {
             String line = in.nextLine();
             if (line.equalsIgnoreCase("bye")) {
                 isRunning = false;
-            } else processMessage(line);
+            } else {
+                handleLineCommand(line);
+            }
         }
         exitMessage();
     }
 
     /**
-     * Interprets the user's input and produces the appropriate task management command.
+     * Processes the command and handles errors, such as exceeding the 100-task limit.
+     *
+     * @param line The user input to be executed.
+     */
+    private static void handleLineCommand(String line) {
+        try {
+            processMessage(line);
+        } catch (DudeException e) {
+            printHorizontalLine();
+            System.out.println(e.getMessage());
+            printHorizontalLine();
+        }
+    }
+
+    /**
+     * Manages command flow by handling terminal actions and coordinates the addition of new tasks
      *
      * @param line The raw string input from the user.
+     * @throws DudeException If the command is invalid or the task limit is reached.
      */
-    private static void processMessage(String line) {
-        if (line.equalsIgnoreCase("list")) {
+    private static void processMessage(String line) throws DudeException {
+        if (isTerminalCommand(line)) return;
+        taskExceeded();
+        addTaskByType(line);
+        taskCreatedMessage();
+    }
+
+    /**
+     * Validates the command syntax and executes non-task actions like list or mark.
+     *
+     * @param line The raw user input string.
+     * @return true if the command was a non-task action (terminal);
+     * false if it is a valid task that needs to be added to the list.
+     * @throws DudeException If the input is empty, the command is unknown,
+     *                       or specific keywords (like /by) are missing.
+     */
+    private static boolean isTerminalCommand(String line) throws DudeException {
+        String filteredMessage = line.trim();
+        if (filteredMessage.isEmpty()) {
+            throw new DudeException("your message cannot be empty.");
+        }
+        String command = getTaskType(line).toLowerCase();
+        switch (command) {
+        case "list":
             listTasks();
-        } else if (line.startsWith("unmark")) {
+            return true;
+        case "unmark":
             handleMarking(line, false);
-        } else if (line.startsWith("mark")) {
+            return true;
+        case "mark":
             handleMarking(line, true);
-        } else {
-            addTaskByType(line);
-            taskCreatedMessage();
+            return true;
+        case "deadline":
+            if (!filteredMessage.contains("/by")) {
+                throw new DudeException("deadline task must have a /by.");
+            }
+            break;
+        case "event":
+            if (!filteredMessage.contains("/from") || !filteredMessage.contains("/to")) {
+                throw new DudeException("event task must have a /from and a /to.");
+            }
+            break;
+        case "todo":
+            if (!filteredMessage.contains(" ")) {
+                throw new DudeException("your todo task cannot be empty.");
+            }
+            break;
+        default:
+            throw new DudeException("only the following commands are valid: list,mark,unmark,deadline,event or todo.");
+        }
+        return false;
+    }
+
+    /**
+     * Ensures the task list does not exceed the maximum capacity of MAX_TASKS.
+     *
+     * @throws DudeException If the task count has reached MAX_TASKS.
+     */
+    private static void taskExceeded() throws DudeException {
+        if (taskCount >= MAX_TASKS) {
+            throw new DudeException("this list is already full.");
         }
     }
 
@@ -52,9 +121,13 @@ public class Dude {
      *
      * @param line   The raw user input containing the task index.
      * @param isDone The new status to set (true for marked, false for unmarked).
+     * @throws DudeException If the task number is out of the valid range of the current list.
      */
-    private static void handleMarking(String line, boolean isDone) {
+    private static void handleMarking(String line, boolean isDone) throws DudeException {
         int index = getTaskNumber(line) - 1;
+        if (index >= taskCount || index < 0) {
+            throw new DudeException("this task number is not valid");
+        }
         taskList[index].setDone(isDone);
         String feedback = isDone
                 ? "Dude OKAY. I've marked this task as done:\n "
@@ -76,19 +149,35 @@ public class Dude {
     }
 
     /**
-     * Adds the corresponding task type to the task list.
+     * Validates and adds the corresponding task type to the task list.
      *
      * @param line The raw user input containing the task type and details.
+     * @throws DudeException If any required part of the task is missing.
      */
-    private static void addTaskByType(String line) {
-        switch (getTaskType(line)) {
+    private static void addTaskByType(String line) throws DudeException {
+        switch (getTaskType(line).toLowerCase()) {
         case "todo":
             taskList[taskCount] = new Todo(getTaskDescription(line));
             break;
         case "deadline":
+            if (getTaskDescription(line).isEmpty()) {
+                throw new DudeException("your deadline task cannot be empty");
+            }
+            if (getDeadlineDate(line).isEmpty()) {
+                throw new DudeException("your deadline /by cannot be empty");
+            }
             taskList[taskCount] = new Deadline(getTaskDescription(line), getDeadlineDate(line));
             break;
         case "event":
+            if (getTaskDescription(line).isEmpty()) {
+                throw new DudeException("your event task cannot be empty");
+            }
+            if (getEventFromTime(line).isEmpty() || getEventToTime(line).isEmpty()) {
+                throw new DudeException("your event /from or /to cannot be empty");
+            }
+            if (getEventToTime(line).contains("/from")) {
+                throw new DudeException("your /from must be before /to");
+            }
             taskList[taskCount] =
                     new Event(getTaskDescription(line), getEventFromTime(line), getEventToTime(line));
             break;
@@ -123,8 +212,13 @@ public class Dude {
      */
     private static void printGreeting() {
         String logo =
-                " ____        _____\n" + "|  _ \\ _   _|  _ \\   ___\n" + "| | | | | | | | | |/  _ \\\n"
-                        + "| |_| | |_| | |_| |\\  __/\n" + "|____/ \\__,_|____/  \\___|\n";
+                """
+                         ____        _____
+                        |  _ \\ _   _|  _ \\   ___
+                        | | | | | | | | | |/  _ \\
+                        | |_| | |_| | |_| |\\  __/
+                        |____/ \\__,_|____/  \\___|
+                        """;
         printHorizontalLine();
         System.out.println(logo + "Hello! I'm Dude\nWhat can I do for you?");
         printHorizontalLine();
@@ -142,12 +236,18 @@ public class Dude {
      *
      * @param message The raw user input.
      * @return The integer task number.
+     * @throws DudeException If no number is provided or if the input cannot be parsed as an integer.
      */
-    public static int getTaskNumber(String message) {
-        message = message.replace(" ", "");
-        message = message.replace("unmark", "");
-        message = message.replace("mark", "");
-        return Integer.parseInt(message);
+    public static int getTaskNumber(String message) throws DudeException {
+        String[] messageParts = message.split(" ", 2);
+        if (messageParts.length < 2 || messageParts[1].trim().isEmpty()) {
+            throw new DudeException("I need a task number to work with.");
+        }
+        try {
+            return Integer.parseInt(messageParts[1].trim());
+        } catch (NumberFormatException e) {
+            throw new DudeException("That's not a number.");
+        }
     }
 
     /**
