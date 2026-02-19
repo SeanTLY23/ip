@@ -6,14 +6,15 @@ import dude.task.Task;
 import dude.task.Todo;
 
 import java.util.Scanner;
+import java.util.ArrayList;
 
 /**
  * Main class for the Dude chatbot.
  * Handles task management including adding, listing, and marking tasks.
  */
 public class Dude {
-    public static final int MAX_TASKS = 100;
-    private static Task[] taskList = new Task[MAX_TASKS];
+   // public static final int MAX_TASKS = 100;
+    private static ArrayList<Task> taskList = new ArrayList<>();
     private static int taskCount = 0;
 
     public static void main(String[] args) {
@@ -61,7 +62,6 @@ public class Dude {
      */
     private static void processMessage(String line) throws DudeException {
         if (isTerminalCommand(line)) return;
-        taskExceeded();
         addTaskByType(line);
         taskCreatedMessage();
     }
@@ -91,6 +91,18 @@ public class Dude {
         case "mark":
             handleMarking(line, true);
             return true;
+        case "delete":
+            int index = getTaskNumber(line) - 1;
+            if (index >= taskCount || index < 0) {
+                throw new DudeException("this task number is not valid");
+            }
+            printHorizontalLine();
+            System.out.println("Dude I've removed this task:\n" + taskList.get(index)
+                    + "\nNow you have " + (taskCount-1) + " tasks in the list.");
+            printHorizontalLine();
+            taskList.remove(index);
+            taskCount -= 1;
+            return true;
         case "deadline":
             if (!filteredMessage.contains("/by")) {
                 throw new DudeException("deadline task must have a /by.");
@@ -113,17 +125,6 @@ public class Dude {
     }
 
     /**
-     * Ensures the task list does not exceed the maximum capacity of MAX_TASKS.
-     *
-     * @throws DudeException If the task count has reached MAX_TASKS.
-     */
-    private static void taskExceeded() throws DudeException {
-        if (taskCount >= MAX_TASKS) {
-            throw new DudeException("this list is already full.");
-        }
-    }
-
-    /**
      * Updates the completion status of a task and provides feedback to the user.
      *
      * @param line   The raw user input containing the task index.
@@ -135,12 +136,12 @@ public class Dude {
         if (index >= taskCount || index < 0) {
             throw new DudeException("this task number is not valid");
         }
-        taskList[index].setDone(isDone);
+        taskList.get(index).setDone(isDone);
         String feedback = isDone
                 ? "Dude OKAY. I've marked this task as done:\n "
                 : "Dude really? I've marked this task as not done yet:\n";
         printHorizontalLine();
-        System.out.println(feedback + taskList[index]);
+        System.out.println(feedback + taskList.get(index));
         printHorizontalLine();
     }
 
@@ -150,7 +151,7 @@ public class Dude {
     private static void taskCreatedMessage() {
         printHorizontalLine();
         System.out.println(
-                "Dude I got it. I've added this task:\n" + taskList[taskCount - 1] + "\nNow you have "
+                "Dude I got it. I've added this task:\n" + taskList.get(taskCount - 1) + "\nNow you have "
                         + taskCount + " tasks in the list.");
         printHorizontalLine();
     }
@@ -164,7 +165,7 @@ public class Dude {
     private static void addTaskByType(String line) throws DudeException {
         switch (getTaskType(line).toLowerCase()) {
         case "todo":
-            taskList[taskCount] = new Todo(getTaskDescription(line));
+            taskList.add(taskCount,new Todo(getTaskDescription(line)));
             break;
         case "deadline":
             if (getTaskDescription(line).isEmpty()) {
@@ -173,7 +174,7 @@ public class Dude {
             if (getDeadlineDate(line).isEmpty()) {
                 throw new DudeException("your deadline /by cannot be empty");
             }
-            taskList[taskCount] = new Deadline(getTaskDescription(line), getDeadlineDate(line));
+            taskList.add(taskCount,new Deadline(getTaskDescription(line), getDeadlineDate(line)));
             break;
         case "event":
             if (getTaskDescription(line).isEmpty()) {
@@ -185,8 +186,7 @@ public class Dude {
             if (getEventToTime(line).contains("/from")) {
                 throw new DudeException("your /from must be before /to");
             }
-            taskList[taskCount] =
-                    new Event(getTaskDescription(line), getEventFromTime(line), getEventToTime(line));
+            taskList.add(taskCount,new Event(getTaskDescription(line), getEventFromTime(line), getEventToTime(line)));
             break;
         default:
             break;
@@ -209,7 +209,7 @@ public class Dude {
         printHorizontalLine();
         System.out.println("Here are the tasks in your list:");
         for (int i = 0; i < taskCount; i++) {
-            System.out.println((i + 1) + "." + taskList[i]);
+            System.out.println((i + 1) + "." + taskList.get(i));
         }
         printHorizontalLine();
     }
@@ -271,6 +271,10 @@ public class Dude {
     public static String getTaskDescription(String message) {
         String type = getTaskType(message);
         String details = message.replaceFirst(type, "").trim();
+        if (type.equalsIgnoreCase("todo"))
+        {
+            return details;
+        }
         String[] parts = details.split("/", 2);
         return parts[0].trim();
     }
