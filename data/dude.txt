@@ -1,3 +1,6 @@
-T | 0 | going on holiday
-D | 0 | submit report | Monday 5pm
 E | 0 | project meeting | Mon 2pm-4pm
+E | 0 | party | 6pm-8pm
+T | 0 | /by Monday
+T | 0 | read book /from 2pm /to 4pm
+T | 0 | read
+T | 0 | todo homework

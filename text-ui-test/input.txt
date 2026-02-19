@@ -1,20 +1,25 @@
-todo read book
-deadline submit report /by Monday 5pm
-event project meeting /from Mon 2pm /to 4pm
-list
-mark 1
-unmark 1
 todo
+   todo read book
+deadline submit report /by Monday 5pm
 deadline return book
 deadline /by tomorrow
 deadline return book /by
+event project meeting /from Mon 2pm /to 4pm
 event concert /from 7pm
 event concert /to 9pm /from 7pm
-blah blah
+event party /from 6pm/to8pm
+todo /by Monday
+todo read book /from 2pm /to 4pm
+list
+mark 1
+unmark 1
+mark 0
 mark 99
 mark abc
 mark
+delete 1
+delete 99
+blah blah
 TODO read
-
 todo todo homework
 bye

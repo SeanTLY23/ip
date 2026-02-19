@@ -141,16 +141,8 @@ public class Dude {
             saveAllTasks();
             return true;
         case "delete":
-            int index = getTaskNumber(line) - 1;
-            if (index >= taskCount || index < 0) {
-                throw new DudeException("this task number is not valid");
-            }
-            printHorizontalLine();
-            System.out.println("Dude I've removed this task:\n" + taskList.get(index)
-                    + "\nNow you have " + (taskCount-1) + " tasks in the list.");
-            printHorizontalLine();
-            taskList.remove(index);
-            taskCount -= 1;
+            handleDeletion(line);
+            saveAllTasks();
             return true;
         case "deadline":
             if (!filteredMessage.contains("/by")) {
@@ -171,6 +163,27 @@ public class Dude {
             throw new DudeException("only the following commands are valid: list,mark,unmark,deadline,event or todo.");
         }
         return false;
+    }
+
+    /**
+     * Removes a task from the list based on the user-provided index.
+     * Validates the index to ensure it falls within the current list range,
+     * and updates the total task count.
+     *
+     * @param line The raw user input containing the index of the task to be deleted.
+     * @throws DudeException If the provided task number is invalid or out of bounds.
+     */
+    private static void handleDeletion(String line) throws DudeException {
+        int index = getTaskNumber(line) - 1;
+        if (index >= taskCount || index < 0) {
+            throw new DudeException("this task number is not valid");
+        }
+        printHorizontalLine();
+        System.out.println("Dude I've removed this task:\n" + taskList.get(index)
+                + "\nNow you have " + (taskCount-1) + " tasks in the list.");
+        printHorizontalLine();
+        taskList.remove(index);
+        taskCount -= 1;
     }
 
     /**

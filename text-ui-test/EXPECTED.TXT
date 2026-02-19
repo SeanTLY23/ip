@@ -1,3 +1,4 @@
+File already exists at: C:\Users\seant\OneDrive\Desktop\ip\text-ui-test\data\dude.txt
 ____________________________________
  ____        _____
 |  _ \ _   _|  _ \   ___
@@ -5,39 +6,25 @@ ____________________________________
 | |_| | |_| | |_| |\  __/
 |____/ \__,_|____/  \___|
 Hello! I'm Dude
+This was your previous saved list of tasks:
+E | 0 | project meeting | Mon 2pm-4pm
+E | 0 | party | 6pm-8pm
+T | 0 | /by Monday
+T | 0 | read book /from 2pm /to 4pm
+T | 0 | read
+T | 0 | todo homework
 What can I do for you?
 ____________________________________
 ____________________________________
-Dude I got it. I've added this task:
-[T][ ] read book
-Now you have 1 tasks in the list.
+Dude, your todo task cannot be empty.
+____________________________________
+____________________________________
+Dude, only the following commands are valid: list,mark,unmark,deadline,event or todo.
 ____________________________________
 ____________________________________
 Dude I got it. I've added this task:
 [D][ ] submit report (by: Monday 5pm)
-Now you have 2 tasks in the list.
-____________________________________
-____________________________________
-Dude I got it. I've added this task:
-[E][ ] project meeting (from: Mon 2pm to: 4pm)
-Now you have 3 tasks in the list.
-____________________________________
-____________________________________
-Here are the tasks in your list:
-1.[T][ ] read book
-2.[D][ ] submit report (by: Monday 5pm)
-3.[E][ ] project meeting (from: Mon 2pm to: 4pm)
-____________________________________
-____________________________________
-Dude OKAY. I've marked this task as done:
- [T][X] read book
-____________________________________
-____________________________________
-Dude really? I've marked this task as not done yet:
-[T][ ] read book
-____________________________________
-____________________________________
-Dude, your todo task cannot be empty.
+Now you have 1 tasks in the list.
 ____________________________________
 ____________________________________
 Dude, deadline task must have a /by.
@@ -49,13 +36,49 @@ ____________________________________
 Dude, your deadline /by cannot be empty
 ____________________________________
 ____________________________________
+Dude I got it. I've added this task:
+[E][ ] project meeting (from: Mon 2pm to: 4pm)
+Now you have 2 tasks in the list.
+____________________________________
+____________________________________
 Dude, event task must have a /from and a /to.
 ____________________________________
 ____________________________________
 Dude, your /from must be before /to
 ____________________________________
 ____________________________________
-Dude, only the following commands are valid: list,mark,unmark,deadline,event or todo.
+Dude I got it. I've added this task:
+[E][ ] party (from: 6pm to: 8pm)
+Now you have 3 tasks in the list.
+____________________________________
+____________________________________
+Dude I got it. I've added this task:
+[T][ ] /by Monday
+Now you have 4 tasks in the list.
+____________________________________
+____________________________________
+Dude I got it. I've added this task:
+[T][ ] read book /from 2pm /to 4pm
+Now you have 5 tasks in the list.
+____________________________________
+____________________________________
+Here are the tasks in your list:
+1.[D][ ] submit report (by: Monday 5pm)
+2.[E][ ] project meeting (from: Mon 2pm to: 4pm)
+3.[E][ ] party (from: 6pm to: 8pm)
+4.[T][ ] /by Monday
+5.[T][ ] read book /from 2pm /to 4pm
+____________________________________
+____________________________________
+Dude OKAY. I've marked this task as done:
+ [D][X] submit report (by: Monday 5pm)
+____________________________________
+____________________________________
+Dude really? I've marked this task as not done yet:
+[D][ ] submit report (by: Monday 5pm)
+____________________________________
+____________________________________
+Dude, this task number is not valid
 ____________________________________
 ____________________________________
 Dude, this task number is not valid
@@ -67,17 +90,25 @@ ____________________________________
 Dude, I need a task number to work with.
 ____________________________________
 ____________________________________
-Dude I got it. I've added this task:
-[T][ ] read
+Dude I've removed this task:
+[D][ ] submit report (by: Monday 5pm)
 Now you have 4 tasks in the list.
 ____________________________________
 ____________________________________
-Dude, your message cannot be empty.
+Dude, this task number is not valid
+____________________________________
+____________________________________
+Dude, only the following commands are valid: list,mark,unmark,deadline,event or todo.
+____________________________________
+____________________________________
+Dude I got it. I've added this task:
+[T][ ] read
+Now you have 5 tasks in the list.
 ____________________________________
 ____________________________________
 Dude I got it. I've added this task:
 [T][ ] todo homework
-Now you have 5 tasks in the list.
+Now you have 6 tasks in the list.
 ____________________________________
 Dude that's it? Okay Bye. See you again soon I hope.
 ____________________________________
