@@ -19,11 +19,8 @@ import java.util.ArrayList;
  * Handles task management including adding, listing, and marking tasks.
  */
 public class Dude {
-   // public static final int MAX_TASKS = 100;
     private static ArrayList<Task> taskList = new ArrayList<>();
-    private static int taskCount = 0;
     private static final Path FILE_PATH = Paths.get("data", "dude.txt");
-
     public static void main(String[] args) {
         createTextFile();
         printGreeting();
@@ -175,15 +172,14 @@ public class Dude {
      */
     private static void handleDeletion(String line) throws DudeException {
         int index = getTaskNumber(line) - 1;
-        if (index >= taskCount || index < 0) {
+        if (index >= taskList.size() || index < 0) {
             throw new DudeException("this task number is not valid");
         }
         printHorizontalLine();
         System.out.println("Dude I've removed this task:\n" + taskList.get(index)
-                + "\nNow you have " + (taskCount-1) + " tasks in the list.");
+                + "\nNow you have " + (taskList.size()-1) + " tasks in the list.");
         printHorizontalLine();
         taskList.remove(index);
-        taskCount -= 1;
     }
 
     /**
@@ -195,7 +191,7 @@ public class Dude {
      */
     private static void handleMarking(String line, boolean isDone) throws DudeException {
         int index = getTaskNumber(line) - 1;
-        if (index >= taskCount || index < 0) {
+        if (index >= taskList.size()|| index < 0) {
             throw new DudeException("this task number is not valid");
         }
         taskList.get(index).setDone(isDone);
@@ -213,8 +209,8 @@ public class Dude {
     private static void taskCreatedMessage() {
         printHorizontalLine();
         System.out.println(
-                "Dude I got it. I've added this task:\n" + taskList.get(taskCount - 1) + "\nNow you have "
-                        + taskCount + " tasks in the list.");
+                "Dude I got it. I've added this task:\n" + taskList.get(taskList.size() - 1) + "\nNow you have "
+                        + taskList.size()+ " tasks in the list.");
         printHorizontalLine();
     }
 
@@ -227,7 +223,7 @@ public class Dude {
     private static void addTaskByType(String line) throws DudeException {
         switch (getTaskType(line).toLowerCase()) {
         case "todo":
-            taskList.add(taskCount,new Todo(getTaskDescription(line)));
+            taskList.add(taskList.size(),new Todo(getTaskDescription(line)));
             break;
         case "deadline":
             if (getTaskDescription(line).isEmpty()) {
@@ -236,7 +232,7 @@ public class Dude {
             if (getDeadlineDate(line).isEmpty()) {
                 throw new DudeException("your deadline /by cannot be empty");
             }
-            taskList.add(taskCount,new Deadline(getTaskDescription(line), getDeadlineDate(line)));
+            taskList.add(taskList.size(),new Deadline(getTaskDescription(line), getDeadlineDate(line)));
             break;
         case "event":
             if (getTaskDescription(line).isEmpty()) {
@@ -248,12 +244,11 @@ public class Dude {
             if (getEventToTime(line).contains("/from")) {
                 throw new DudeException("your /from must be before /to");
             }
-            taskList.add(taskCount,new Event(getTaskDescription(line), getEventFromTime(line), getEventToTime(line)));
+            taskList.add(taskList.size(),new Event(getTaskDescription(line), getEventFromTime(line), getEventToTime(line)));
             break;
         default:
             break;
         }
-        taskCount += 1;
         saveAllTasks();
     }
 
@@ -262,8 +257,8 @@ public class Dude {
      */
     private static void saveAllTasks() {
         try (FileWriter fw = new FileWriter(FILE_PATH.toFile(), false)) {
-            for (int i = 0; i < taskCount; i++) {
-                fw.write(formatTaskForFile(taskList.get(i)) + System.lineSeparator());
+            for (Task task : taskList) {
+                fw.write(formatTaskForFile(task) + System.lineSeparator());
             }
         } catch (IOException e) {
             System.out.println("Dude, I couldn't save the changes: " + e.getMessage());
@@ -308,7 +303,7 @@ public class Dude {
     private static void listTasks() {
         printHorizontalLine();
         System.out.println("Here are the tasks in your list:");
-        for (int i = 0; i < taskCount; i++) {
+        for (int i = 0; i < taskList.size(); i++) {
             System.out.println((i + 1) + "." + taskList.get(i));
         }
         printHorizontalLine();
