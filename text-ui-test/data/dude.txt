@@ -1,0 +1,5 @@
+T | 0 | read book
+D | 0 | submit report | Monday 5pm
+E | 0 | project meeting | Mon 2pm-4pm
+T | 0 | read
+T | 0 | todo homework

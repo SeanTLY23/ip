@@ -5,7 +5,13 @@ import dude.task.Event;
 import dude.task.Task;
 import dude.task.Todo;
 
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Scanner;
+import java.io.File;
 
 /**
  * Main class for the Dude chatbot.
@@ -15,10 +21,51 @@ public class Dude {
     public static final int MAX_TASKS = 100;
     private static Task[] taskList = new Task[MAX_TASKS];
     private static int taskCount = 0;
+    private static final Path FILE_PATH = Paths.get("data", "dude.txt");
 
     public static void main(String[] args) {
+        createTextFile();
         printGreeting();
         respondToMessage();
+    }
+
+    /**
+     * Ensures that the required directory and data file exist on the hard disk.
+     * If the parent directory is missing, it is created. If the file is missing,
+     * a new empty file is initialized.
+     */
+    private static void createTextFile() {
+        File f = FILE_PATH.toFile();
+        File parent = f.getParentFile();
+        try {
+            if (parent != null && !parent.exists()) {
+                boolean success = parent.mkdirs();
+                if (success) {
+                    System.out.println("Dude I created a data directory");
+                }
+            }
+            if (f.createNewFile()) {
+                System.out.println("File created at: " + f.getAbsolutePath());
+            } else {
+                System.out.println("File already exists at: " + f.getAbsolutePath());
+            }
+        } catch (IOException e) {
+            System.out.println("Error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * This is used to display the raw saved task data to the user during startup.
+     *
+     * @param filePath The string path of the file to be read.
+     * @throws FileNotFoundException If the file at the specified path does not exist.
+     */
+    private static void printFileContents(String filePath) throws FileNotFoundException {
+        File f = new File(filePath);
+        Scanner s = new Scanner(f);
+        while (s.hasNext()) {
+            System.out.println(s.nextLine());
+        }
     }
 
     /**
@@ -87,9 +134,11 @@ public class Dude {
             return true;
         case "unmark":
             handleMarking(line, false);
+            saveAllTasks();
             return true;
         case "mark":
             handleMarking(line, true);
+            saveAllTasks();
             return true;
         case "deadline":
             if (!filteredMessage.contains("/by")) {
@@ -192,6 +241,44 @@ public class Dude {
             break;
         }
         taskCount += 1;
+        saveAllTasks();
+    }
+
+    /**
+     * Overwrites the save file with the current list of tasks from memory.
+     */
+    private static void saveAllTasks() {
+        try (FileWriter fw = new FileWriter(FILE_PATH.toFile(), false)) {
+            for (int i = 0; i < taskCount; i++) {
+                fw.write(formatTaskForFile(taskList[i]) + System.lineSeparator());
+            }
+        } catch (IOException e) {
+            System.out.println("Dude, I couldn't save the changes: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Converts a Task object into a formatted string for file storage.
+     * The format used is "Type | Status | Description | [Optional Dates]".
+     *
+     * @param t The task to be formatted.
+     * @return A string representation of the task to be displayed in the text file.
+     */
+    private static String formatTaskForFile(Task t) {
+        String status = t.isDone() ? "1" : "0";
+        String type = "";
+        String details = "";
+        if (t instanceof Todo) {
+            type = "T";
+            details = t.getTaskName();
+        } else if (t instanceof Deadline) {
+            type = "D";
+            details = t.getTaskName() + " | " + ((Deadline) t).getBy();
+        } else if (t instanceof Event) {
+            type = "E";
+            details = t.getTaskName() + " | " + ((Event) t).getFrom() + "-" + ((Event) t).getTo();
+        }
+        return type + " | " + status + " | " + details;
     }
 
     /**
@@ -216,6 +303,8 @@ public class Dude {
 
     /**
      * Displays initial welcome message.
+     * Attempts to read and print the contents of the save file to provide context for the user
+     * before the chatbot accepts new commands.
      */
     private static void printGreeting() {
         String logo =
@@ -227,7 +316,14 @@ public class Dude {
                         |____/ \\__,_|____/  \\___|
                         """;
         printHorizontalLine();
-        System.out.println(logo + "Hello! I'm Dude\nWhat can I do for you?");
+        System.out.println(logo + "Hello! I'm Dude");
+        System.out.println("This was your previous saved list of tasks:");
+        try {
+            printFileContents(String.valueOf(FILE_PATH.toFile()));
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        }
+        System.out.println("What can I do for you?");
         printHorizontalLine();
     }
 
