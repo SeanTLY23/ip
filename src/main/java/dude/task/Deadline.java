@@ -10,7 +10,7 @@ public class Deadline extends Task {
      * Initializes a new Deadline task with the given description.
      *
      * @param description The text describing the task.
-     * @param by The deadline date or time.
+     * @param by          The deadline date or time.
      */
     public Deadline(String description, String by) {
         super(description);

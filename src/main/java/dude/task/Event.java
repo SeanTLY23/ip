@@ -12,7 +12,7 @@ public class Event extends Task {
      *
      * @param task The text describing the event.
      * @param from The start time/date.
-     * @param to The end time/date.
+     * @param to   The end time/date.
      */
     public Event(String task, String from, String to) {
         super(task);

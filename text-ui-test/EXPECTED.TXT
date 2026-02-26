@@ -7,13 +7,43 @@ ____________________________________
 |____/ \__,_|____/  \___|
 Hello! I'm Dude
 This was your previous saved list of tasks:
-E | 0 | project meeting | Mon 2pm-4pm
-E | 0 | party | 6pm-8pm
+E | 0 | project meeting | Mon 2pm | 4pm
+E | 0 | party | 6pm | 8pm
 T | 0 | /by Monday
 T | 0 | read book /from 2pm /to 4pm
 T | 0 | read
 T | 0 | todo homework
 What can I do for you?
+____________________________________
+____________________________________
+Dude I've removed this task:
+[E][ ] project meeting (from: Mon 2pm to: 4pm)
+Now you have 5 tasks in the list.
+____________________________________
+____________________________________
+Dude I've removed this task:
+[E][ ] party (from: 6pm to: 8pm)
+Now you have 4 tasks in the list.
+____________________________________
+____________________________________
+Dude I've removed this task:
+[T][ ] /by Monday
+Now you have 3 tasks in the list.
+____________________________________
+____________________________________
+Dude I've removed this task:
+[T][ ] read book /from 2pm /to 4pm
+Now you have 2 tasks in the list.
+____________________________________
+____________________________________
+Dude I've removed this task:
+[T][ ] read
+Now you have 1 tasks in the list.
+____________________________________
+____________________________________
+Dude I've removed this task:
+[T][ ] todo homework
+Now you have 0 tasks in the list.
 ____________________________________
 ____________________________________
 Dude, your todo task cannot be empty.

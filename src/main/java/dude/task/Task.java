@@ -31,6 +31,7 @@ public abstract class Task {
 
     /**
      * Returns a visual icon representing completion.
+     *
      * @return "X" if done, else a blank space.
      */
     public String getStatusIcon() {

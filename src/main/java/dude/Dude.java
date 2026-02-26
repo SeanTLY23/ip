@@ -21,10 +21,25 @@ import java.util.ArrayList;
 public class Dude {
     private static ArrayList<Task> taskList = new ArrayList<>();
     private static final Path FILE_PATH = Paths.get("data", "dude.txt");
+
     public static void main(String[] args) {
         createTextFile();
+        loadTasksFromFile();
         printGreeting();
         respondToMessage();
+    }
+
+    /**
+     * Starts the data loading process. This method attempts to read
+     * the saved file and populate the task list. If no file is
+     * found, it notifies the user that a new list is being started.
+     */
+    private static void loadTasksFromFile() {
+        try {
+            convertSavedFileToCurrentList(String.valueOf(FILE_PATH.toFile()));
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found");
+        }
     }
 
     /**
@@ -53,16 +68,52 @@ public class Dude {
     }
 
     /**
-     * This is used to display the raw saved task data to the user during startup.
+     * Reads the data file line by line and converts text entries into Task objects.
+     * Each line is split at the "|" symbol to identify the task type:
+     * Todo (T), Deadline (D), or Event (E). Based on this type, the method
+     * creates the specific object and adds it to the list.
      *
-     * @param filePath The string path of the file to be read.
-     * @throws FileNotFoundException If the file at the specified path does not exist.
+     * @param filePath The location of the file to be read.
+     * @throws FileNotFoundException If the file at the specified path cannot be found.
      */
     private static void printFileContents(String filePath) throws FileNotFoundException {
         File f = new File(filePath);
         Scanner s = new Scanner(f);
         while (s.hasNext()) {
             System.out.println(s.nextLine());
+        }
+    }
+
+    /**
+     * Reads the specified file line-by-line and parses each entry into Task objects.
+     * * The expected file format uses a pipe-delimited structure:
+     * Type | Status | Description | [Date/Time info]
+     * * @param filePath The string path to the saved data file.
+     *
+     * @throws FileNotFoundException If no file exists at the provided path.
+     */
+
+    private static void convertSavedFileToCurrentList(String filePath) throws FileNotFoundException {
+        File f = new File(filePath);
+        Scanner s = new Scanner(f);
+        while (s.hasNext()) {
+            String nextLine = s.nextLine();
+            String[] parts = nextLine.split("\\|", 5);
+            switch (parts[0].trim()) {
+            case "T":
+                taskList.add(taskList.size(), new Todo(parts[2].trim()));
+                break;
+            case "D":
+                taskList.add(taskList.size(), new Deadline(parts[2].trim(), parts[3].trim()));
+                break;
+            case "E":
+                taskList.add(taskList.size(),
+                        new Event(parts[2].trim(), parts[3].trim(), parts[4].trim()));
+                break;
+            default:
+                break;
+            }
+
         }
     }
 
@@ -177,7 +228,7 @@ public class Dude {
         }
         printHorizontalLine();
         System.out.println("Dude I've removed this task:\n" + taskList.get(index)
-                + "\nNow you have " + (taskList.size()-1) + " tasks in the list.");
+                + "\nNow you have " + (taskList.size() - 1) + " tasks in the list.");
         printHorizontalLine();
         taskList.remove(index);
     }
@@ -191,7 +242,7 @@ public class Dude {
      */
     private static void handleMarking(String line, boolean isDone) throws DudeException {
         int index = getTaskNumber(line) - 1;
-        if (index >= taskList.size()|| index < 0) {
+        if (index >= taskList.size() || index < 0) {
             throw new DudeException("this task number is not valid");
         }
         taskList.get(index).setDone(isDone);
@@ -210,7 +261,7 @@ public class Dude {
         printHorizontalLine();
         System.out.println(
                 "Dude I got it. I've added this task:\n" + taskList.get(taskList.size() - 1) + "\nNow you have "
-                        + taskList.size()+ " tasks in the list.");
+                        + taskList.size() + " tasks in the list.");
         printHorizontalLine();
     }
 
@@ -223,7 +274,7 @@ public class Dude {
     private static void addTaskByType(String line) throws DudeException {
         switch (getTaskType(line).toLowerCase()) {
         case "todo":
-            taskList.add(taskList.size(),new Todo(getTaskDescription(line)));
+            taskList.add(taskList.size(), new Todo(getTaskDescription(line)));
             break;
         case "deadline":
             if (getTaskDescription(line).isEmpty()) {
@@ -232,7 +283,7 @@ public class Dude {
             if (getDeadlineDate(line).isEmpty()) {
                 throw new DudeException("your deadline /by cannot be empty");
             }
-            taskList.add(taskList.size(),new Deadline(getTaskDescription(line), getDeadlineDate(line)));
+            taskList.add(taskList.size(), new Deadline(getTaskDescription(line), getDeadlineDate(line)));
             break;
         case "event":
             if (getTaskDescription(line).isEmpty()) {
@@ -244,7 +295,8 @@ public class Dude {
             if (getEventToTime(line).contains("/from")) {
                 throw new DudeException("your /from must be before /to");
             }
-            taskList.add(taskList.size(),new Event(getTaskDescription(line), getEventFromTime(line), getEventToTime(line)));
+            taskList.add(taskList.size(),
+                    new Event(getTaskDescription(line), getEventFromTime(line), getEventToTime(line)));
             break;
         default:
             break;
@@ -284,7 +336,7 @@ public class Dude {
             details = t.getTaskName() + " | " + ((Deadline) t).getBy();
         } else if (t instanceof Event) {
             type = "E";
-            details = t.getTaskName() + " | " + ((Event) t).getFrom() + "-" + ((Event) t).getTo();
+            details = t.getTaskName() + " | " + ((Event) t).getFrom() + " | " + ((Event) t).getTo();
         }
         return type + " | " + status + " | " + details;
     }
@@ -375,8 +427,7 @@ public class Dude {
     public static String getTaskDescription(String message) {
         String type = getTaskType(message);
         String details = message.replaceFirst(type, "").trim();
-        if (type.equalsIgnoreCase("todo"))
-        {
+        if (type.equalsIgnoreCase("todo")) {
             return details;
         }
         String[] parts = details.split("/", 2);

@@ -1,3 +1,9 @@
+delete 1
+delete 1
+delete 1
+delete 1
+delete 1
+delete 1
 todo
    todo read book
 deadline submit report /by Monday 5pm
@@ -23,3 +29,4 @@ blah blah
 TODO read
 todo todo homework
 bye
+
