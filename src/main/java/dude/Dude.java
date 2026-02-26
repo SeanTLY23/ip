@@ -19,8 +19,9 @@ import java.util.ArrayList;
  * Handles task management including adding, listing, and marking tasks.
  */
 public class Dude {
-    private static ArrayList<Task> taskList = new ArrayList<>();
+    private static final ArrayList<Task> taskList = new ArrayList<>();
     private static final Path FILE_PATH = Paths.get("data", "dude.txt");
+    private static final Ui ui = new Ui();
 
     public static void main(String[] args) {
         createTextFile();
@@ -121,17 +122,16 @@ public class Dude {
      * Processes user input in a loop until the 'bye' command is received.
      */
     public static void respondToMessage() {
-        Scanner in = new Scanner(System.in);
         boolean isRunning = true;
         while (isRunning) {
-            String line = in.nextLine();
-            if (line.equalsIgnoreCase("bye")) {
+            String line = ui.readCommand();
+            if (Parser.isExit(line)) {
                 isRunning = false;
             } else {
                 handleLineCommand(line);
             }
         }
-        exitMessage();
+        ui.showExit();
     }
 
     /**
@@ -143,9 +143,9 @@ public class Dude {
         try {
             processMessage(line);
         } catch (DudeException e) {
-            printHorizontalLine();
+            ui.showLine();
             System.out.println(e.getMessage());
-            printHorizontalLine();
+            ui.showLine();
         }
     }
 
@@ -158,7 +158,7 @@ public class Dude {
     private static void processMessage(String line) throws DudeException {
         if (isTerminalCommand(line)) return;
         addTaskByType(line);
-        taskCreatedMessage();
+        ui.showTaskCreated(taskList.get(taskList.size() - 1), taskList.size());
     }
 
     /**
@@ -175,10 +175,10 @@ public class Dude {
         if (filteredMessage.isEmpty()) {
             throw new DudeException("your message cannot be empty.");
         }
-        String command = getTaskType(line).toLowerCase();
+        String command = Parser.getTaskType(line).toLowerCase();
         switch (command) {
         case "list":
-            listTasks();
+            ui.showTaskList(taskList);
             return true;
         case "unmark":
             handleMarking(line, false);
@@ -222,15 +222,12 @@ public class Dude {
      * @throws DudeException If the provided task number is invalid or out of bounds.
      */
     private static void handleDeletion(String line) throws DudeException {
-        int index = getTaskNumber(line) - 1;
+        int index = Parser.getTaskNumber(line) - 1;
         if (index >= taskList.size() || index < 0) {
             throw new DudeException("this task number is not valid");
         }
-        printHorizontalLine();
-        System.out.println("Dude I've removed this task:\n" + taskList.get(index)
-                + "\nNow you have " + (taskList.size() - 1) + " tasks in the list.");
-        printHorizontalLine();
-        taskList.remove(index);
+        Task removed = taskList.remove(index);
+        ui.showTaskDeleted(removed, taskList.size());
     }
 
     /**
@@ -241,7 +238,7 @@ public class Dude {
      * @throws DudeException If the task number is out of the valid range of the current list.
      */
     private static void handleMarking(String line, boolean isDone) throws DudeException {
-        int index = getTaskNumber(line) - 1;
+        int index = Parser.getTaskNumber(line) - 1;
         if (index >= taskList.size() || index < 0) {
             throw new DudeException("this task number is not valid");
         }
@@ -249,21 +246,11 @@ public class Dude {
         String feedback = isDone
                 ? "Dude OKAY. I've marked this task as done:\n "
                 : "Dude really? I've marked this task as not done yet:\n";
-        printHorizontalLine();
+        ui.showLine();
         System.out.println(feedback + taskList.get(index));
-        printHorizontalLine();
+        ui.showLine();
     }
 
-    /**
-     * Prints a confirmation message after a task is successfully added to the list.
-     */
-    private static void taskCreatedMessage() {
-        printHorizontalLine();
-        System.out.println(
-                "Dude I got it. I've added this task:\n" + taskList.get(taskList.size() - 1) + "\nNow you have "
-                        + taskList.size() + " tasks in the list.");
-        printHorizontalLine();
-    }
 
     /**
      * Validates and adds the corresponding task type to the task list.
@@ -272,31 +259,32 @@ public class Dude {
      * @throws DudeException If any required part of the task is missing.
      */
     private static void addTaskByType(String line) throws DudeException {
-        switch (getTaskType(line).toLowerCase()) {
+        String command = Parser.getTaskType(line).toLowerCase();
+        String description = Parser.getTaskDescription(line);
+        if (description.isEmpty()) {
+            throw new DudeException("your " + command + " task cannot be empty");
+        }
+        switch (command) {
         case "todo":
-            taskList.add(taskList.size(), new Todo(getTaskDescription(line)));
+            taskList.add(taskList.size(), new Todo(description));
             break;
         case "deadline":
-            if (getTaskDescription(line).isEmpty()) {
-                throw new DudeException("your deadline task cannot be empty");
-            }
-            if (getDeadlineDate(line).isEmpty()) {
+            String by = Parser.getDeadlineDate(line);
+            if (by.isEmpty()) {
                 throw new DudeException("your deadline /by cannot be empty");
             }
-            taskList.add(taskList.size(), new Deadline(getTaskDescription(line), getDeadlineDate(line)));
+            taskList.add(new Deadline(description, by));
             break;
         case "event":
-            if (getTaskDescription(line).isEmpty()) {
-                throw new DudeException("your event task cannot be empty");
-            }
-            if (getEventFromTime(line).isEmpty() || getEventToTime(line).isEmpty()) {
+            String from = Parser.getEventFromTime(line);
+            String to = Parser.getEventToTime(line);
+            if (from.isEmpty() || to.isEmpty()) {
                 throw new DudeException("your event /from or /to cannot be empty");
             }
-            if (getEventToTime(line).contains("/from")) {
+            if (to.contains("/from")) {
                 throw new DudeException("your /from must be before /to");
             }
-            taskList.add(taskList.size(),
-                    new Event(getTaskDescription(line), getEventFromTime(line), getEventToTime(line)));
+            taskList.add(new Event(description, from, to));
             break;
         default:
             break;
@@ -342,26 +330,6 @@ public class Dude {
     }
 
     /**
-     * Prints the closing message when the user exits the chatbot.
-     */
-    private static void exitMessage() {
-        System.out.println("Dude that's it? Okay Bye. See you again soon I hope.");
-        printHorizontalLine();
-    }
-
-    /**
-     * Iterates through the task list and prints each task with its index number.
-     */
-    private static void listTasks() {
-        printHorizontalLine();
-        System.out.println("Here are the tasks in your list:");
-        for (int i = 0; i < taskList.size(); i++) {
-            System.out.println((i + 1) + "." + taskList.get(i));
-        }
-        printHorizontalLine();
-    }
-
-    /**
      * Displays initial welcome message.
      * Attempts to read and print the contents of the save file to provide context for the user
      * before the chatbot accepts new commands.
@@ -375,7 +343,7 @@ public class Dude {
                         | |_| | |_| | |_| |\\  __/
                         |____/ \\__,_|____/  \\___|
                         """;
-        printHorizontalLine();
+        ui.showLine();
         System.out.println(logo + "Hello! I'm Dude");
         System.out.println("This was your previous saved list of tasks:");
         try {
@@ -384,78 +352,7 @@ public class Dude {
             System.out.println("File not found");
         }
         System.out.println("What can I do for you?");
-        printHorizontalLine();
+        ui.showLine();
     }
 
-    /**
-     * Prints a horizontal separator line to the console.
-     */
-    public static void printHorizontalLine() {
-        System.out.println("____________________________________");
-    }
-
-    /**
-     * Extracts the task index number from a command string.
-     *
-     * @param message The raw user input.
-     * @return The integer task number.
-     * @throws DudeException If no number is provided or if the input cannot be parsed as an integer.
-     */
-    public static int getTaskNumber(String message) throws DudeException {
-        String[] messageParts = message.split(" ", 2);
-        if (messageParts.length < 2 || messageParts[1].trim().isEmpty()) {
-            throw new DudeException("I need a task number to work with.");
-        }
-        try {
-            return Integer.parseInt(messageParts[1].trim());
-        } catch (NumberFormatException e) {
-            throw new DudeException("That's not a number.");
-        }
-    }
-
-    /**
-     * Extracts the first word from the message to determine the command task type.
-     */
-    public static String getTaskType(String message) {
-        String[] commandParts = message.split(" ", 2);
-        return commandParts[0];
-    }
-
-    /**
-     * Extracts the description by splitting at the first slash (/).
-     */
-    public static String getTaskDescription(String message) {
-        String type = getTaskType(message);
-        String details = message.replaceFirst(type, "").trim();
-        if (type.equalsIgnoreCase("todo")) {
-            return details;
-        }
-        String[] parts = details.split("/", 2);
-        return parts[0].trim();
-    }
-
-    /**
-     * Extracts the date/time for a deadline task by splitting at "/by".
-     */
-    public static String getDeadlineDate(String message) {
-        String[] parts = message.split("/by", 2);
-        return parts[1].trim();
-    }
-
-    /**
-     * Extracts the "from" time for an event task by splitting between "/from" and "/to".
-     */
-    public static String getEventFromTime(String message) {
-        String afterFrom = message.split("/from", 2)[1];
-        String[] timeParts = afterFrom.split("/to", 2);
-        return timeParts[0].trim();
-    }
-
-    /**
-     * Extracts the "to" time for an event task by taking everything after "/to".
-     */
-    public static String getEventToTime(String message) {
-        String[] parts = message.split("/to", 2);
-        return parts[1].trim();
-    }
 }
