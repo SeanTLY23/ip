@@ -58,6 +58,14 @@ public class Storage {
         return filePath.toFile().getAbsolutePath();
     }
 
+    /**
+     * Loads tasks from the data file and populates an ArrayList of Task objects.
+     * The method parses each line using the pipe ("|") delimiter and reconstructs
+     * the specific task type (Todo, Deadline, or Event) along with its completion status.
+     *
+     * @return An ArrayList containing the Task objects read from the file.
+     * @throws FileNotFoundException If the save file does not exist at the specified path.
+     */
     public ArrayList<Task> load() throws FileNotFoundException {
         ArrayList<Task> loadedTasks = new ArrayList<>();
         File f = filePath.toFile();

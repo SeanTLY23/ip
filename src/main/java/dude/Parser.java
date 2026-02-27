@@ -41,7 +41,16 @@ public class Parser {
         return commandParts[0];
     }
 
-    public static String getFindDescription(String message) throws DudeException{
+    /**
+     * Extracts the search keyword from the find command.
+     * Checks if a keyword was actually provided and throws an exception
+     * if the search term is empty.
+     *
+     * @param message The raw user input string starting with "find".
+     * @return The trimmed search keyword.
+     * @throws DudeException If the user types "find" without a keyword.
+     */
+    public static String getFindDescription(String message) throws DudeException {
         String description = message.replaceFirst("find", "").trim();
         if (description.isEmpty()) {
             throw new DudeException("your find command cannot be empty");
