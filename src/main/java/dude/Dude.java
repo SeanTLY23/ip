@@ -134,6 +134,11 @@ public class Dude {
             handleDeletion(line);
             saveAllTasks();
             return true;
+        case "find":
+            String findMessage = Parser.getFindDescription(line);
+            ArrayList<Task> matchingTasks = taskList.findTasks(findMessage);
+            ui.showSearchResults(matchingTasks);
+            return true;
         case "deadline":
             if (!filteredMessage.contains("/by")) {
                 throw new DudeException("deadline task must have a /by.");
@@ -150,7 +155,8 @@ public class Dude {
             }
             break;
         default:
-            throw new DudeException("only the following commands are valid: list,mark,unmark,deadline,event or todo.");
+            throw new DudeException("only the following commands are valid: "
+                    + "list,mark,unmark,delete,find,deadline,event or todo.");
         }
         return false;
     }

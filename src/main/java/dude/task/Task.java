@@ -17,6 +17,10 @@ public abstract class Task {
         isDone = false;
     }
 
+    public boolean contains(String keyword) {
+        return this.getTaskName().contains(keyword);
+    }
+
     public String getTaskName() {
         return taskName;
     }
