@@ -5,6 +5,12 @@ import dude.task.Task;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Manages the user interface and interaction for the application.
+ * This class is responsible for reading user input via the scanner and
+ * displaying formatted messages, errors, and task information to the
+ * console.
+ */
 public class Ui {
     private static final String HORIZONTAL_LINE = "____________________________________";
     private static final String LOGO =

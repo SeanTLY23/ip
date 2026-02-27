@@ -49,7 +49,7 @@ ____________________________________
 Dude, your todo task cannot be empty.
 ____________________________________
 ____________________________________
-Dude, only the following commands are valid: list,mark,unmark,deadline,event or todo.
+Dude, only the following commands are valid: list,mark,unmark,delete,find,deadline,event or todo.
 ____________________________________
 ____________________________________
 Dude I got it. I've added this task:
@@ -128,7 +128,7 @@ ____________________________________
 Dude, this task number is not valid
 ____________________________________
 ____________________________________
-Dude, only the following commands are valid: list,mark,unmark,deadline,event or todo.
+Dude, only the following commands are valid: list,mark,unmark,delete,find,deadline,event or todo.
 ____________________________________
 ____________________________________
 Dude I got it. I've added this task:

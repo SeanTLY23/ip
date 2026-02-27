@@ -14,6 +14,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+/**
+ * Handles the loading and saving of task data to the local hard disk.
+ * This class is responsible for file I/O operations, including creating necessary
+ * directories, parsing the saved data format into Task objects, and converting
+ * Task objects back into a persistent string format.
+ */
 public class Storage {
     private final Path filePath;
 
@@ -58,6 +64,14 @@ public class Storage {
         return filePath.toFile().getAbsolutePath();
     }
 
+    /**
+     * Loads tasks from the data file and populates an ArrayList of Task objects.
+     * The method parses each line using the pipe ("|") delimiter and reconstructs
+     * the specific task type (Todo, Deadline, or Event) along with its completion status.
+     *
+     * @return An ArrayList containing the Task objects read from the file.
+     * @throws FileNotFoundException If the save file does not exist at the specified path.
+     */
     public ArrayList<Task> load() throws FileNotFoundException {
         ArrayList<Task> loadedTasks = new ArrayList<>();
         File f = filePath.toFile();
