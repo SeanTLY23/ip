@@ -13,8 +13,7 @@ public class Ui {
                     |  _ \\ _   _|  _ \\   ___
                     | | | | | | | | | |/  _ \\
                     | |_| | |_| | |_| |\\  __/
-                    |____/ \\__,_|____/  \\___|
-                    """;
+                    |____/ \\__,_|____/  \\___|""";
     private final Scanner in;
 
     public Ui() {
@@ -77,13 +76,67 @@ public class Ui {
     }
 
 
-    public void showGreeting() {
+    public void showGreeting(ArrayList<String> oldTasks) {
         showLine();
         showLogo();
         System.out.println("Hello! I'm Dude");
+        System.out.println("This was your previous saved list of tasks:");
+        for (String line : oldTasks) {
+            System.out.println(line);
+        }
         System.out.println("What can I do for you?");
         showLine();
+    }
 
+    /**
+     * Displays the status of the data file initialization.
+     * Notifies the user whether a new file was created or an existing one was found.
+     *
+     * @param isNew True if a new file was created, false if it already existed.
+     * @param path  The absolute file path where the data is stored.
+     */
+    public void showFileStatus(boolean isNew, String path) {
+        if (isNew) {
+            System.out.println("File created at: " + path);
+        } else {
+            System.out.println("File already exists at: " + path);
+        }
+    }
+
+    /**
+     * Displays feedback to the user when a task is marked or unmarked.
+     *
+     * @param task   The task that was modified.
+     * @param isDone The new status of the task.
+     */
+    public void showMarkingFeedback(Task task, boolean isDone) {
+        String feedback = isDone
+                ? "Dude OKAY. I've marked this task as done:\n "
+                : "Dude really? I've marked this task as not done yet:\n";
+
+        showLine();
+        System.out.println(feedback + task);
+        showLine();
+    }
+
+    /**
+     * Displays a message confirming the creation of a data directory.
+     */
+    public void showDirectoryCreated() {
+        showLine();
+        System.out.println("Dude I created a data directory");
+        showLine();
+    }
+
+    /**
+     * Displays an error message to the user in a styled format.
+     *
+     * @param message The error message to be displayed.
+     */
+    public void showError(String message) {
+        showLine();
+        System.out.println("Dude, " + message);
+        showLine();
     }
 
     public void showExit() {

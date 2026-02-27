@@ -38,6 +38,8 @@ public abstract class Task {
         return (isDone ? "X" : " ");
     }
 
+    public abstract String toFileFormat();
+
     @Override
     public String toString() {
         return "[" + getStatusIcon() + "] " + getTaskName();
