@@ -129,6 +129,24 @@ public class Ui {
     }
 
     /**
+     * Displays the results of a keyword search.
+     *
+     * @param results The list of tasks that matched the search.
+     */
+    public void showSearchResults(ArrayList<Task> results) {
+        showLine();
+        if (results.isEmpty()) {
+            System.out.println("Dude, I couldn't find any tasks matching that keyword.");
+        } else {
+            System.out.println("Dude, here are the matching tasks in your list:");
+            for (int i = 0; i < results.size(); i++) {
+                System.out.println((i + 1) + "." + results.get(i));
+            }
+        }
+        showLine();
+    }
+
+    /**
      * Displays an error message to the user in a styled format.
      *
      * @param message The error message to be displayed.

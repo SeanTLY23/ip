@@ -11,10 +11,6 @@ public class TaskList {
         this.taskList = new ArrayList<>();
     }
 
-    public TaskList(ArrayList<Task> tasks) {
-        this.taskList = tasks;
-    }
-
     /**
      * Helper to check if the index is within the bounds of the list.
      */
@@ -22,6 +18,22 @@ public class TaskList {
         if (index < 0 || index >= taskList.size()) {
             throw new DudeException("this task number is not valid");
         }
+    }
+
+    /**
+     * Searches the task list for tasks whose description contains the keyword.
+     *
+     * @param keyword The string to search for.
+     * @return A list of matching tasks.
+     */
+    public ArrayList<Task> findTasks(String keyword) {
+        ArrayList<Task> matchingTasks = new ArrayList<>();
+        for (Task task : taskList) {
+            if (task.contains(keyword)) {
+                matchingTasks.add(task);
+            }
+        }
+        return matchingTasks;
     }
 
     public void addTask(Task task) {

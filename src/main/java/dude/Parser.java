@@ -41,6 +41,14 @@ public class Parser {
         return commandParts[0];
     }
 
+    public static String getFindDescription(String message) throws DudeException{
+        String description = message.replaceFirst("find", "").trim();
+        if (description.isEmpty()) {
+            throw new DudeException("your find command cannot be empty");
+        }
+        return description;
+    }
+
     /**
      * Extracts the description by splitting at the first slash (/).
      */
