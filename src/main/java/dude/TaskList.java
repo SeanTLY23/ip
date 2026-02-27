@@ -4,6 +4,12 @@ import dude.task.Task;
 
 import java.util.ArrayList;
 
+/**
+ * Represents the in-memory list of tasks and provides operations to manage them.
+ * This class acts as a wrapper around an ArrayList of Tasks, offering high-level
+ * methods to add, delete, find, and retrieve tasks, while ensuring index safety
+ * through internal validation.
+ */
 public class TaskList {
     private final ArrayList<Task> taskList;
 
