@@ -142,7 +142,7 @@ public class Ui {
     public void showSearchResults(ArrayList<Task> results) {
         showLine();
         if (results.isEmpty()) {
-            System.out.println("Dude, I couldn't find any tasks matching that keyword.");
+            System.out.println("Dude, I could not find any tasks matching that keyword.");
         } else {
             System.out.println("Dude, here are the matching tasks in your list:");
             for (int i = 0; i < results.size(); i++) {
